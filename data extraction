@@ -1,0 +1,62 @@
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime, timedelta
+import os
+
+from src.trailer_extract import process_csv
+from src.data_cleaning import clean
+from src.snowflake_upload import sf_upload
+
+default_args = {
+    "owner": "paarvi",  # personalize this
+    "depends_on_past": False,
+    "retries": 1,
+    "retry_delay": timedelta(minutes=5),
+}
+
+# Task functions
+def extract_trailer_data():
+    process_csv(
+        '/opt/airflow/src/dataset.csv',
+        '/opt/airflow/src/final_dataset.csv'
+    )
+
+def preprocess_data():
+    clean(
+        '/opt/airflow/src/final_dataset.csv',
+        '/opt/airflow/src/final_movies.csv',
+        '/opt/airflow/src/final_tvshows.csv'
+    )
+
+def upload_data_to_snowflake():
+    sf_upload(
+        '/opt/airflow/src/final_movies.csv',
+        '/opt/airflow/src/final_tvshows.csv'
+    )
+
+# DAG definition
+with DAG(
+    dag_id="ott_recommendation_etl_pipeline",
+    default_args=default_args,
+    description="ETL pipeline for OTT recommendation system",
+    schedule_interval=None,
+    start_date=datetime(2024, 4, 21),
+    catchup=False,
+) as dag:
+
+    extract_task = PythonOperator(
+        task_id="extract_trailer_data",
+        python_callable=extract_trailer_data,
+    )
+
+    clean_task = PythonOperator(
+        task_id="preprocess_data",
+        python_callable=preprocess_data,
+    )
+
+    upload_task = PythonOperator(
+        task_id="upload_to_snowflake",
+        python_callable=upload_data_to_snowflake,
+    )
+
+    extract_task >> clean_task >> upload_task
