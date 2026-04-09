@@ -113,4 +113,6 @@ docker compose up -d
 ```
 This will create an airflow instance, postgresDB, streamlit for frontend and fastapi for backend.
 
-Happy Watching!
+
+THANK YOU.
+PROJECT BY : PAARVI BHAMBRI
