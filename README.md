@@ -72,8 +72,7 @@ unit_testing.py
 utils.py
 ```
 
-
-# Technology Stack
+_**TECHNOLOGY STACK**_
 
 [![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://cloud.google.com)
 [![Python](https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
@@ -87,14 +86,14 @@ utils.py
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
 
-# Data Source
+_**DATA SOURCE**_
 
 The data source consists of records from Netflix, Hulu, Amazon Prime and DisneyPlus 
 
 - **Kaggle**: Curated datasets from a broad range of streaming content.
 - **TMDb API**: Real-time data access to movies and TV shows metadata.
 
-# Run Application Locally
+_**RUN APP LOCALLY**_
 
 1. Clone the repo.
 2. Install the dependencies.
@@ -114,6 +113,8 @@ docker compose up -d
 This will create an airflow instance, postgresDB, streamlit for frontend and fastapi for backend.
 
 
-THANK YOU.
 
-PROJECT BY : PAARVI BHAMBRI
+**THANK YOU.**
+
+
+**_PROJECT BY : PAARVI BHAMBRI_**
