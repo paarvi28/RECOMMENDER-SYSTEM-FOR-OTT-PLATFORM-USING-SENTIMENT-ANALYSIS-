@@ -85,6 +85,7 @@ Data acquisition is facilitated through the following sources:
 Kaggle: Provides curated and structured datasets encompassing a wide range of streaming content, enabling comprehensive analysis and preprocessing.
 TMDb API: Offers real-time access to detailed metadata for movies and television shows, including attributes such as ratings, cast, genres, and descriptions.
 
+
 _**RUN APP LOCALLY**_
 
 1. Clone the repo.
