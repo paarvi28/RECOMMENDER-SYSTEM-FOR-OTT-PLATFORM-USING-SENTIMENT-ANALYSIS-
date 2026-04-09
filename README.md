@@ -79,10 +79,11 @@ _**TECHNOLOGY STACK**_
 
 _**DATA SOURCE**_
 
-The data source consists of records from Netflix, Hulu, Amazon Prime and DisneyPlus 
+The dataset utilized in this project comprises content records aggregated from major OTT streaming platforms, including Netflix, Hulu, Amazon Prime Video, and Disney+.
+Data acquisition is facilitated through the following sources:
 
-- **Kaggle**: Curated datasets from a broad range of streaming content.
-- **TMDb API**: Real-time data access to movies and TV shows metadata.
+Kaggle: Provides curated and structured datasets encompassing a wide range of streaming content, enabling comprehensive analysis and preprocessing.
+TMDb API: Offers real-time access to detailed metadata for movies and television shows, including attributes such as ratings, cast, genres, and descriptions.
 
 _**RUN APP LOCALLY**_
 
