@@ -11,6 +11,7 @@ From a design perspective, the system is built as a complete data pipeline, whic
 - Recommendation Engine: A mixed approach that combines rule-based filtering and similarity search
 - API & Interface Layer: Smooth interaction through backend services and a user-friendly frontend
 The use of workflow orchestration tools ensures dependable scheduling and execution of data pipelines, while containerization allows for portability and consistency across development and deployment environments.
+
 The main goals of Binge-watch are to:
 - Provide highly personalized and context-aware recommendations
 - Decrease user decision fatigue through smart content curation
