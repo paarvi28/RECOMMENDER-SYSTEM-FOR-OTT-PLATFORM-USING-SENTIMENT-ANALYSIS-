@@ -21,10 +21,10 @@ This project demonstrates a real-world application of data engineering, machine 
 _**SYSTEM OBJECTIVES**_
 
 The primary objectives of BingeWatch include:
-•	Delivering highly personalized and context-aware recommendations 
-•	Reducing user decision fatigue through intelligent content curation 
-•	Ensuring scalability to handle growing datasets and user interactions 
-•	Demonstrating a production-oriented approach to building recommendation systems 
+- Delivering highly personalized and context-aware recommendations
+- Reducing user decision fatigue through intelligent content curation
+- Ensuring scalability to handle growing datasets and user interactions
+- Demonstrating a production-oriented approach to building recommendation systems 
 
 _**SIGNIFICANCE**_
 
