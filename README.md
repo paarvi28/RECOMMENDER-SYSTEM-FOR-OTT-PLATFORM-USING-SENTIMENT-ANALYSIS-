@@ -40,36 +40,26 @@ _**PROJECT STRUCTURE**_
 
 ``` 
 .github
-   |-- flow
-   |   |-- ci.yml
-.gitignore
-Dockerfile
+|-- flow
+gitignore
+dockerFile
 README.md
-airflow_rec
-   |-- dags
-   |   |-- __init__.py
-   |   |-- data_extraction.py
-   |-- src
-   |   |-- __init__.py
-   |   |-- data_cleaning.py
-   |   |-- rag_implementation.py
-   |   |-- similarity_search.py
-   |   |-- snowflake_upload.py
-   |   |-- trailer_extract.py
-bingewatch.py
-contentapi.py
-db_module
-   |-- __init__.py
-   |-- db.py
-   |-- user_handler.py
-docker-compose.yaml
+
+|-- data_extraction.py
+|-- data_cleaning.py
+|-- upload snowflake.py
+|-- extract trailer.py
+modelbingewatch.py
+apicontent.py
+|-- databasemodule
+|-- handler.py
+
 main.py
-models
-   |-- __init__.py
-   |-- pydantic_validators.py
-   |-- user_model.py
+|-- pydantic valid.py
+|-- model user.py
+
 requirements.txt
-unit_testing.py
+test case.py
 utils.py
 ```
 
