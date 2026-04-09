@@ -33,6 +33,7 @@ This project reflects a practical implementation of concepts from data engineeri
 
 _**ARCHITECTURE DETAILS**_
 For details on the architecture and implementation, visit this codelabs documenattion.
+
 [![Codelabs Tutorial](https://img.shields.io/badge/Codelabs_Tutorial-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://codelabs-preview.appspot.com/?file_id=1z-pGIA6HOZregKgnnslvBE-ZZRUS_rhmiQvnVc8Xoww#0)
 
 _**PROJECT STRUCTURE**_
@@ -97,15 +98,12 @@ _**RUN APP LOCALLY**_
 
 1. Clone the repo.
 2. Install the dependencies.
-
 ```
 pip install -r requirements.txt 
 ```
-
 3. Run the Dockerfile to generate the image and run the Docker compose file to bring up the instances.
 ```
 docker build -t <image_name> .
-
 ```
 ```
 docker compose up -d
