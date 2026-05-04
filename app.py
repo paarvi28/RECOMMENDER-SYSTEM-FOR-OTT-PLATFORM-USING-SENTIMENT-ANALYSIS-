@@ -1,19 +1,24 @@
-import os
 import streamlit as st
 import pandas as pd
 
-st.title("🎬 BingeWatch Recommendation System")
+st.set_page_config(layout="wide")
+
+st.title("🎬 BingeWatch - OTT Recommendation System")
 st.markdown("Personalized recommendations using sentiment analysis")
 
-# Load dataset
 try:
-    df = pd.read_csv("final_movies.csv")
+    df = pd.read_csv("final_movies.csv", encoding="latin1")
     st.success("Dataset loaded successfully!")
 except Exception as e:
     st.error(f"Error loading dataset: {e}")
     st.stop()
 
-from textblob import TextBlob
+df.columns = df.columns.str.lower()
+
+title_col = 'title' if 'title' in df.columns else df.columns[0]
+genre_col = 'listed_in' if 'listed_in' in df.columns else None
+rating_col = 'rating' if 'rating' in df.columns else None
+desc_col = 'description' if 'description' in df.columns else None
 
 def get_sentiment(text):
     text = str(text).lower()
@@ -22,11 +27,9 @@ def get_sentiment(text):
     negative_words = ['bad', 'boring', 'worst', 'hate', 'poor', 'slow']
 
     score = 0
-
     for word in positive_words:
         if word in text:
             score += 1
-
     for word in negative_words:
         if word in text:
             score -= 1
@@ -37,14 +40,21 @@ def get_sentiment(text):
         return "😞 Negative"
     else:
         return "😐 Neutral"
-df['sentiment'] = df['overview'].apply(get_sentiment)
 
-st.markdown(
-    f"""
-    <p style="color:#00ffcc;">{row['sentiment']}</p>
-    """,
-    unsafe_allow_html=True
-)
+if desc_col:
+    df['sentiment'] = df[desc_col].apply(get_sentiment)
+else:
+    df['sentiment'] = "😐 Neutral"
+
+st.subheader("🎯 Filter Content")
+
+if genre_col:
+    genres = df[genre_col].dropna().unique()
+    selected_genre = st.selectbox("Select Genre", genres)
+
+    filtered_df = df[df[genre_col].astype(str).str.contains(selected_genre, na=False)].head(12)
+else:
+    filtered_df = df.head(12)
 
 st.markdown("""
 <style>
@@ -53,21 +63,39 @@ body {
 }
 </style>
 """, unsafe_allow_html=True)
+
+st.subheader("🔥 Recommended for You")
+
 cols = st.columns(3)
 
 for i, row in filtered_df.iterrows():
     col = cols[i % 3]
 
     with col:
+        title = row.get(title_col, "No Title")
+        rating = row.get(rating_col, "N/A") if rating_col else "N/A"
+        description = str(row.get(desc_col, "No description"))[:120] if desc_col else "No description"
+        sentiment = row.get('sentiment', "😐 Neutral")
+
+        # Sentiment color
+        if "Positive" in sentiment:
+            color = "#00ff00"
+        elif "Negative" in sentiment:
+            color = "#ff4d4d"
+        else:
+            color = "#cccccc"
+
         st.markdown(f"""
         <div style="
             background-color:#1c1c1c;
-            padding:10px;
+            padding:12px;
             border-radius:10px;
             margin-bottom:20px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
         ">
-            <h4 style="color:white;">{row['title']}</h4>
-            <p style="color:gray;">⭐ {row.get('imdb', 'N/A')}</p>
-            <p style="color:#bbb;">{str(row.get('overview', 'No description'))[:100]}...</p>
+            <h4 style="color:white;">{title}</h4>
+            <p style="color:gray;">⭐ {rating}</p>
+            <p style="color:{color};">{sentiment}</p>
+            <p style="color:#bbb;">{description}...</p>
         </div>
         """, unsafe_allow_html=True)
