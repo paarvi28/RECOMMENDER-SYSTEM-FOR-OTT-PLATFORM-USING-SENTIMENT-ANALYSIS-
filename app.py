@@ -62,24 +62,30 @@ rating_col = 'rating'
 desc_col = 'description'
 
 # ------------------ SENTIMENT ------------------ #
-def get_sentiment(text):
+def get_sentiment(text): 
     text = str(text).lower()
     pos = ['good','great','amazing','love','excellent','fun']
     neg = ['bad','boring','worst','hate','poor','slow']
 
     score = 0
     for w in pos:
-        if w in text: score += 1
+        if w in text:
+            score += 1
     for w in neg:
-        if w in text: score -= 1
+        if w in text:
+            score -= 1
 
-    if score > 0: return "Positive"
-    elif score < 0: return "Negative"
-    else: return "Neutral"
+    if score > 0:
+        return "Positive"
+    elif score < 0:
+        return "Negative"
+    else:
+        return "Neutral"
 
-if desc_col:
+if desc_col is not None and desc_col in df.columns:
     df['sentiment'] = df[desc_col].astype(str).apply(get_sentiment)
 else:
+    st.warning("No description column found. Using default sentiment.")
     df['sentiment'] = "Neutral"
 
 # ------------------ FILTER BAR ------------------ #
