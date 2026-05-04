@@ -37,7 +37,7 @@ df.columns = df.columns.str.lower().str.strip()
 title_col = next((c for c in df.columns if 'title' in c), df.columns[0])
 genre_col = next((c for c in df.columns if 'listed' in c or 'genre' in c), None)
 rating_col = next((c for c in df.columns if 'rating' in c or 'imdb' in c), None)
-desc_col = next((c for c in df.columns if 'description' in c or 'overview' in c), None)
+desc_col = next((c for c in df.columns if 'description' in c or 'overview' in c or 'summary' in c), None)
 
 # ------------------ SENTIMENT FUNCTION ------------------ #
 def get_sentiment(text):
@@ -67,16 +67,28 @@ if desc_col and desc_col in df.columns:
 else:
     df['sentiment'] = "😐 Neutral"
 
+# ------------------ SEARCH ------------------ #
+search = st.text_input("🔍 Search for a movie")
+
 # ------------------ FILTER ------------------ #
-st.subheader("🎯 Filter Content")
+st.markdown("## 🎯 Filter Content")
+st.markdown("---")
 
 if genre_col:
     genres = df[genre_col].dropna().unique()
     selected_genre = st.selectbox("Select Genre", genres)
 
-    filtered_df = df[df[genre_col].astype(str).str.contains(selected_genre, na=False)].head(20)
+    filtered_df = df[df[genre_col].astype(str).str.contains(selected_genre, na=False)]
 else:
-    filtered_df = df.head(20)
+    filtered_df = df.copy()
+
+# Apply search filter
+if search:
+    filtered_df = filtered_df[
+        filtered_df[title_col].astype(str).str.contains(search, case=False, na=False)
+    ]
+
+filtered_df = filtered_df.head(20)
 
 # ------------------ STYLE ------------------ #
 st.markdown("""
@@ -110,15 +122,15 @@ st.markdown(scroll_html, unsafe_allow_html=True)
 
 # ------------------ POSTER PLACEHOLDER ------------------ #
 def get_dummy_poster():
-    return "https://via.placeholder.com/300x450.png?text=No+Image"
+    return "https://via.placeholder.com/300x450.png?text=Movie"
 
 # ------------------ RECOMMENDED CARDS ------------------ #
 st.subheader("🔥 Recommended for You")
 
-cols = st.columns(3)
+cols = st.columns(4)
 
 for i, row in filtered_df.iterrows():
-    col = cols[i % 3]
+    col = cols[i % 4]
 
     with col:
         title = row.get(title_col, "No Title")
@@ -126,38 +138,31 @@ for i, row in filtered_df.iterrows():
         description = str(row.get(desc_col, "No description")) if desc_col else "No description"
         sentiment = row.get('sentiment', "😐 Neutral")
 
-        # Sentiment color
+        # Sentiment badge
         if "Positive" in sentiment:
-            color = "#00ff88"
+            badge = "🟢 Positive"
         elif "Negative" in sentiment:
-            color = "#ff4d4d"
+            badge = "🔴 Negative"
         else:
-            color = "#cccccc"
+            badge = "⚪ Neutral"
 
         st.markdown(f"""
         <div style="
-            background-color:#141414;
+            background:#111;
             border-radius:12px;
             overflow:hidden;
-            margin-bottom:20px;
-            box-shadow:0 6px 15px rgba(0,0,0,0.6);
-        ">
-            <img src="{get_dummy_poster()}" style="width:100%; height:300px; object-fit:cover;">
-            
+            transition:0.3s;
+        " onmouseover="this.style.transform='scale(1.05)'" 
+           onmouseout="this.style.transform='scale(1)'">
+
+            <img src="{get_dummy_poster()}"
+                 style="width:100%; height:260px; object-fit:cover;">
+
             <div style="padding:10px;">
-                <h4 style="color:white; margin-bottom:5px;">{title}</h4>
-                
-                <p style="color:#aaa; font-size:13px;">
-                    ⭐ {rating}
-                </p>
-
-                <p style="color:{color}; font-weight:bold;">
-                    {sentiment}
-                </p>
-
-                <p style="color:#bbb; font-size:12px;">
-                    {description[:90]}...
-                </p>
+                <h4 style="color:white;">{title}</h4>
+                <p style="color:#aaa;">⭐ {rating}</p>
+                <p style="color:#00ffcc;">{badge}</p>
+                <p style="color:#bbb; font-size:12px;">{description[:100]}...</p>
             </div>
         </div>
         """, unsafe_allow_html=True)
