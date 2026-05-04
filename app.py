@@ -77,7 +77,10 @@ def get_sentiment(text):
     elif score < 0: return "Negative"
     else: return "Neutral"
 
-df['sentiment'] = df[desc_col].apply(get_sentiment)
+if desc_col:
+    df['sentiment'] = df[desc_col].astype(str).apply(get_sentiment)
+else:
+    df['sentiment'] = "Neutral"
 
 # ------------------ FILTER BAR ------------------ #
 col1, col2, col3 = st.columns([2,2,1])
