@@ -26,7 +26,12 @@ def get_sentiment(text):
 
 df['sentiment'] = df['overview'].apply(get_sentiment)
 
-<p style="color:#00ffcc;">{row['sentiment']}</p>
+st.markdown(
+    f"""
+    <p style="color:#00ffcc;">{row['sentiment']}</p>
+    """,
+    unsafe_allow_html=True
+)
 
 st.markdown("""
 <style>
