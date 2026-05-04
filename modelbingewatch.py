@@ -31,7 +31,7 @@ class Like(Base):
     content_type= Column(String)
 
 # Database connection
-DATABASE_URL = "postgresql://airflow:airflow@postgres/airflow"
+DATABASE_URL = "MoviesOnStreamingPlatforms.csv"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
