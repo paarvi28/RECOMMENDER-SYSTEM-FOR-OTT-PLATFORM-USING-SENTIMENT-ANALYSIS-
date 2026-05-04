@@ -16,14 +16,27 @@ except Exception as e:
 from textblob import TextBlob
 
 def get_sentiment(text):
-    polarity = TextBlob(str(text)).sentiment.polarity
-    if polarity > 0.1:
+    text = str(text).lower()
+
+    positive_words = ['good', 'great', 'amazing', 'love', 'excellent', 'fun']
+    negative_words = ['bad', 'boring', 'worst', 'hate', 'poor', 'slow']
+
+    score = 0
+
+    for word in positive_words:
+        if word in text:
+            score += 1
+
+    for word in negative_words:
+        if word in text:
+            score -= 1
+
+    if score > 0:
         return "😊 Positive"
-    elif polarity < -0.1:
+    elif score < 0:
         return "😞 Negative"
     else:
         return "😐 Neutral"
-
 df['sentiment'] = df['overview'].apply(get_sentiment)
 
 st.markdown(
