@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
 
-# Page config
+# ------------------ PAGE CONFIG ------------------ #
 st.set_page_config(layout="wide")
+
+# ------------------ GLOBAL STYLE ------------------ #
 st.markdown("""
 <style>
 .main {
@@ -29,7 +31,7 @@ h1, h2, h3, h4 {
 </style>
 """, unsafe_allow_html=True)
 
-# Title
+# ------------------ TITLE ------------------ #
 st.title("🎬 BingeWatch - OTT Recommendation System")
 st.markdown("Personalized recommendations using sentiment analysis")
 
@@ -40,28 +42,28 @@ except Exception as e:
     st.error(f"Error loading dataset: {e}")
     st.stop()
 
-# Standardize column names
-df.columns = df.columns.str.lower()
+# ------------------ CLEAN COLUMNS ------------------ #
+df.columns = df.columns.str.lower().str.strip()
 
 # ------------------ COLUMN MAPPING ------------------ #
-title_col = 'title' if 'title' in df.columns else df.columns[0]
-genre_col = 'listed_in' if 'listed_in' in df.columns else None
-rating_col = 'rating' if 'rating' in df.columns else None
-desc_col = 'description' if 'description' in df.columns else None
+title_col = next((c for c in df.columns if 'title' in c), df.columns[0])
+genre_col = next((c for c in df.columns if 'listed' in c or 'genre' in c), None)
+rating_col = next((c for c in df.columns if 'rating' in c or 'imdb' in c), None)
+desc_col = next((c for c in df.columns if 'description' in c or 'overview' in c or 'summary' in c), None)
 
 # ------------------ SENTIMENT FUNCTION ------------------ #
 def get_sentiment(text):
     text = str(text).lower()
 
-    positive_words = ['good', 'great', 'amazing', 'love', 'excellent', 'fun']
-    negative_words = ['bad', 'boring', 'worst', 'hate', 'poor', 'slow']
+    pos = ['good','great','amazing','love','excellent','fun']
+    neg = ['bad','boring','worst','hate','poor','slow']
 
     score = 0
-    for word in positive_words:
-        if word in text:
+    for w in pos:
+        if w in text:
             score += 1
-    for word in negative_words:
-        if word in text:
+    for w in neg:
+        if w in text:
             score -= 1
 
     if score > 0:
@@ -71,13 +73,13 @@ def get_sentiment(text):
     else:
         return "😐 Neutral"
 
-# Apply sentiment
-if desc_col:
-    df['sentiment'] = df[desc_col].apply(get_sentiment)
+# ------------------ APPLY SENTIMENT SAFELY ------------------ #
+if desc_col and desc_col in df.columns:
+    df['sentiment'] = df[desc_col].astype(str).apply(get_sentiment)
 else:
     df['sentiment'] = "😐 Neutral"
 
-# ------------------ FILTER ------------------ #
+# ------------------ SEARCH + FILTER UI ------------------ #
 st.markdown("## 🔍 Discover Content")
 
 col1, col2 = st.columns([2, 1])
@@ -87,11 +89,12 @@ with col1:
 
 with col2:
     if genre_col:
-        genres = df[genre_col].dropna().unique()
+        genres = sorted(df[genre_col].dropna().unique())
         selected_genre = st.selectbox("Genre", genres)
     else:
         selected_genre = None
-        
+
+# ------------------ FILTER LOGIC ------------------ #
 filtered_df = df.copy()
 
 if selected_genre and genre_col:
@@ -106,6 +109,7 @@ if search:
 
 filtered_df = filtered_df.head(20)
 
+# ------------------ TRENDING SECTION ------------------ #
 st.markdown("## 🔥 Trending Now")
 
 trend_cols = st.columns(5)
@@ -115,16 +119,7 @@ for i, (_, row) in enumerate(filtered_df.head(5).iterrows()):
         st.image("https://via.placeholder.com/200x300.png?text=Trending", use_column_width=True)
         st.caption(row.get(title_col, "No Title"))
 
-# ------------------ STYLE ------------------ #
-st.markdown("""
-<style>
-body {
-    background-color: #0e1117;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ------------------ NETFLIX STYLE CARDS ------------------ #
+# ------------------ RECOMMENDED SECTION ------------------ #
 st.markdown("## 🎬 Recommended For You")
 
 cols = st.columns(4)
@@ -146,10 +141,13 @@ for i, row in filtered_df.iterrows():
         else:
             badge = "⚪ Neutral"
 
-        # Card layout (SAFE)
+        # CARD UI (SAFE)
         with st.container():
             st.image("https://via.placeholder.com/300x400.png?text=Movie", use_column_width=True)
             st.markdown(f"**{title}**")
             st.caption(f"⭐ {rating}")
             st.write(badge)
             st.caption(description)
+
+st.markdown("---")
+st.caption("Built with ❤️ using Streamlit")
