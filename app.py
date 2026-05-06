@@ -95,10 +95,10 @@ for i, row in filtered_df.iterrows():
         else:
             sentiment_class = "neutral"
 
-        st.markdown(f"""
+st.markdown(f"""
 <div class="card">
     <div class="card-title">{title}</div>
-    <p>&#11088; {rating}</p>
+    <p>Rating: {rating}</p>
     <p class="{sentiment_class}">{sentiment}</p>
     <p>{description}...</p>
 </div>
