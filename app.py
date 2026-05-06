@@ -110,7 +110,7 @@ st.markdown("## 🔥 Trending Now")
 
 trend_cols = st.columns(5)
 
-for i, row in enumerate(filtered_df.head(5)):
+for i, (_, row) in enumerate(filtered_df.head(5).iterrows()):
     with trend_cols[i]:
         st.image("https://via.placeholder.com/200x300.png?text=Trending", use_column_width=True)
         st.caption(row.get(title_col, "No Title"))
