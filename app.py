@@ -11,14 +11,38 @@ TMDB_API_KEY = "11da9eae256550559571dda4eb783d7c"
 st.markdown("""
 <style>
 
-/* GOOGLE FONT */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
-/* BACKGROUND */
-html, body, [class*="css"] {
-    font-family: 'Poppins', sans-serif;
+/* FULL PAGE BACKGROUND FIX */
+html, body, .stApp {
     background: linear-gradient(135deg, #0f172a, #1e293b, #020617);
     color: white;
+}
+
+/* REMOVE WHITE HEADER AREA */
+header {
+    background: transparent !important;
+}
+
+/* MAIN CONTAINER */
+.main {
+    background: transparent;
+}
+
+/* FIX TOP GAP AREA */
+.block-container {
+    padding-top: 1rem;
+    background: transparent;
+}
+
+/* REMOVE ANY WHITE BLOCKS */
+section[data-testid="stSidebar"] {
+    background: #020617;
+}
+
+/* FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Poppins', sans-serif;
 }
 
 /* HEADINGS */
@@ -34,21 +58,14 @@ h3 {
     color: #cbd5f5;
 }
 
-/* SEARCH + INPUT */
+/* INPUT */
 .stTextInput input {
     background-color: #1e293b;
     color: white;
-    border: 1px solid #334155;
     border-radius: 10px;
 }
 
-/* SELECT BOX */
-.stSelectbox div {
-    background-color: #1e293b;
-    color: white;
-}
-
-/* CARD DESIGN (GLASS EFFECT) */
+/* CARD */
 .card {
     background: rgba(30, 41, 59, 0.6);
     backdrop-filter: blur(10px);
@@ -56,19 +73,15 @@ h3 {
     padding: 12px;
     margin-bottom: 20px;
     transition: 0.3s ease;
-    border: 1px solid rgba(255,255,255,0.05);
 }
 
-/* HOVER EFFECT */
 .card:hover {
     transform: scale(1.05);
     box-shadow: 0px 10px 25px rgba(99,102,241,0.3);
 }
 
-/* CARD TITLE */
+/* TEXT */
 .card-title {
-    font-size: 16px;
-    font-weight: 600;
     color: #f8fafc;
 }
 
@@ -77,23 +90,9 @@ h3 {
 .negative { color: #ef4444; }
 .neutral { color: #94a3b8; }
 
-/* SECTION HEADINGS */
-h2 {
-    color: #e2e8f0;
-    margin-top: 20px;
-}
-
-/* SCROLLBAR (nice touch) */
-::-webkit-scrollbar {
-    width: 6px;
-}
-::-webkit-scrollbar-thumb {
-    background: #6366f1;
-    border-radius: 10px;
-}
-
 </style>
 """, unsafe_allow_html=True)
+
 # ---------------- TITLE ---------------- #
 st.markdown("""
 <h1>🎬 BingeWatch -- MoodWatch</h1>
