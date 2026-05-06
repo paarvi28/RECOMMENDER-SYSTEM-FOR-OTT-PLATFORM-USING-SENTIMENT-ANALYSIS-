@@ -10,38 +10,119 @@ TMDB_API_KEY = "11da9eae256550559571dda4eb783d7c"
 # ---------------- STYLE ---------------- #
 st.markdown("""
 <style>
-body { background-color: #0e1117; }
 
-.card {
-    background-color:#111;
-    border-radius:12px;
-    overflow:hidden;
-    transition:0.3s;
-}
-.card:hover {
-    transform: scale(1.05);
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* GLOBAL */
+html, body, [class*="css"]  {
+    font-family: 'Poppins', sans-serif;
+    background-color: #0b0f1a;
 }
 
-.title {
-    color:white;
-    font-size:16px;
-    font-weight:600;
+/* MAIN CONTAINER */
+.main {
+    background: linear-gradient(180deg, #0b0f1a 0%, #111827 100%);
 }
 
-.sentiment {
-    font-size:13px;
+/* HEADINGS */
+h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #ffffff;
 }
 
-.section-title {
-    color:white;
-    margin-top:20px;
+h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #e5e7eb;
 }
+
+h3 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #d1d5db;
+}
+
+/* TEXT */
+p, span {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* INPUT BOX */
+.stTextInput input {
+    background-color: #1f2937;
+    color: white;
+    border-radius: 8px;
+    border: 1px solid #374151;
+}
+
+/* SELECT BOX */
+.stSelectbox div {
+    background-color: #1f2937;
+    color: white;
+}
+
+/* BUTTON */
+.stButton button {
+    background-color: #6366f1;
+    color: white;
+    border-radius: 8px;
+    border: none;
+}
+.stButton button:hover {
+    background-color: #4f46e5;
+}
+
+/* CARD DESIGN */
+cols = st.columns(4)
+
+for i, row in filtered_df.iterrows():
+    col = cols[i % 4]
+
+    with col:
+        title = row.get(title_col, "No Title")
+        rating = row.get(rating_col, "N/A") if rating_col else "N/A"
+        description = str(row.get(desc_col, ""))[:90]
+        sentiment = row.get('sentiment', "Neutral")
+
+        # sentiment class
+        if "Positive" in sentiment:
+            sentiment_class = "positive"
+        elif "Negative" in sentiment:
+            sentiment_class = "negative"
+        else:
+            sentiment_class = "neutral"
+
+        st.markdown(f"""
+        <div class="card">
+            <div class="card-title">{title}</div>
+            <p>⭐ {rating}</p>
+            <p class="{sentiment_class}">{sentiment}</p>
+            <p>{description}...</p>
+        </div>
+        """, unsafe_allow_html=True)
+/* TITLE INSIDE CARD */
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #f9fafb;
+}
+
+/* SENTIMENT COLORS */
+.positive { color: #22c55e; }
+.negative { color: #ef4444; }
+.neutral { color: #9ca3af; }
+
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------- TITLE ---------------- #
-st.title("🎬 BingeWatch")
-st.caption("Netflix-style AI Recommendation System")
+st.markdown("""
+<h1>🎬 BingeWatch -- MoodWatch </h1>
+<h3>Your AI-powered OTT Recommendation Engine</h3>
+""", unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ---------------- #
 df = pd.read_csv("final_movies.csv", encoding="latin1")
