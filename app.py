@@ -5,7 +5,7 @@ import requests
 # ---------------- CONFIG ---------------- #
 st.set_page_config(layout="wide")
 
-TMDB_API_KEY = "YOUR_TMDB_API_KEY"  # replace if needed
+TMDB_API_KEY = "11da9eae256550559571dda4eb783d7c" 
 
 # ---------------- STYLE ---------------- #
 st.markdown("""
