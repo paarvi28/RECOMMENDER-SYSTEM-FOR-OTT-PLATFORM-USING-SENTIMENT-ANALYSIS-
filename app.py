@@ -11,7 +11,7 @@ st.markdown("Personalized recommendations using sentiment analysis")
 # ------------------ LOAD DATA ------------------ #
 try:
     df = pd.read_csv("final_movies.csv", encoding="latin1")
-    st.success("Dataset loaded successfully!")
+    
 except Exception as e:
     st.error(f"Error loading dataset: {e}")
     st.stop()
