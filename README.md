@@ -32,9 +32,12 @@ _**SIGNIFICANCE**_
 This project reflects a practical implementation of concepts from data engineering, machine learning, and system design, making it a comprehensive solution for modern recommendation challenges. It not only enhances user experience but also serves as a strong demonstration of building real-world, scalable AI-driven applications.
 
 _**ARCHITECTURE DETAILS**_
-For details on the architecture and implementation, visit this codelabs documenattion.
 
-[![Codelabs Tutorial](https://img.shields.io/badge/Codelabs_Tutorial-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://codelabs-preview.appspot.com/?file_id=1z-pGIA6HOZregKgnnslvBE-ZZRUS_rhmiQvnVc8Xoww#0)
+
+React Frontend  →  FastAPI Backend  →  ML Logic / CSV / DB
+        ↑                ↓
+   User UI        JSON API Response
+   
 
 _**PROJECT STRUCTURE**_
 
