@@ -3,6 +3,31 @@ import pandas as pd
 
 # Page config
 st.set_page_config(layout="wide")
+st.markdown("""
+<style>
+.main {
+    background-color: #0e1117;
+}
+
+h1, h2, h3, h4 {
+    color: white;
+}
+
+.stTextInput>div>div>input {
+    background-color: #1c1c1c;
+    color: white;
+}
+
+.stSelectbox>div>div {
+    background-color: #1c1c1c;
+    color: white;
+}
+
+.block-container {
+    padding-top: 1rem;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # Title
 st.title("🎬 BingeWatch - OTT Recommendation System")
@@ -53,15 +78,42 @@ else:
     df['sentiment'] = "😐 Neutral"
 
 # ------------------ FILTER ------------------ #
-st.subheader("🎯 Filter Content")
+st.markdown("## 🔍 Discover Content")
 
-if genre_col:
-    genres = df[genre_col].dropna().unique()
-    selected_genre = st.selectbox("Select Genre", genres)
+col1, col2 = st.columns([2, 1])
 
-    filtered_df = df[df[genre_col].astype(str).str.contains(selected_genre, na=False)].head(12)
-else:
-    filtered_df = df.head(12)
+with col1:
+    search = st.text_input("Search movies or shows")
+
+with col2:
+    if genre_col:
+        genres = df[genre_col].dropna().unique()
+        selected_genre = st.selectbox("Genre", genres)
+    else:
+        selected_genre = None
+        
+filtered_df = df.copy()
+
+if selected_genre and genre_col:
+    filtered_df = filtered_df[
+        filtered_df[genre_col].astype(str).str.contains(selected_genre, na=False)
+    ]
+
+if search:
+    filtered_df = filtered_df[
+        filtered_df[title_col].astype(str).str.contains(search, case=False, na=False)
+    ]
+
+filtered_df = filtered_df.head(20)
+
+st.markdown("## 🔥 Trending Now")
+
+trend_cols = st.columns(5)
+
+for i, row in enumerate(filtered_df.head(5)):
+    with trend_cols[i]:
+        st.image("https://via.placeholder.com/200x300.png?text=Trending", use_column_width=True)
+        st.caption(row.get(title_col, "No Title"))
 
 # ------------------ STYLE ------------------ #
 st.markdown("""
@@ -73,38 +125,31 @@ body {
 """, unsafe_allow_html=True)
 
 # ------------------ NETFLIX STYLE CARDS ------------------ #
-st.subheader("🔥 Recommended for You")
+st.markdown("## 🎬 Recommended For You")
 
-cols = st.columns(3)
+cols = st.columns(4)
 
 for i, row in filtered_df.iterrows():
-    col = cols[i % 3]
+    col = cols[i % 4]
 
     with col:
         title = row.get(title_col, "No Title")
         rating = row.get(rating_col, "N/A") if rating_col else "N/A"
-        description = str(row.get(desc_col, "No description"))[:120] if desc_col else "No description"
+        description = str(row.get(desc_col, "No description"))[:90] if desc_col else "No description"
         sentiment = row.get('sentiment', "😐 Neutral")
 
-        # Sentiment color
+        # Sentiment badge
         if "Positive" in sentiment:
-            color = "#00ff00"
+            badge = "🟢 Positive"
         elif "Negative" in sentiment:
-            color = "#ff4d4d"
+            badge = "🔴 Negative"
         else:
-            color = "#cccccc"
+            badge = "⚪ Neutral"
 
-        st.markdown(f"""
-        <div style="
-            background-color:#1c1c1c;
-            padding:12px;
-            border-radius:10px;
-            margin-bottom:20px;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
-        ">
-            <h4 style="color:white;">{title}</h4>
-            <p style="color:gray;">⭐ {rating}</p>
-            <p style="color:{color};">{sentiment}</p>
-            <p style="color:#bbb;">{description}...</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # Card layout (SAFE)
+        with st.container():
+            st.image("https://via.placeholder.com/300x400.png?text=Movie", use_column_width=True)
+            st.markdown(f"**{title}**")
+            st.caption(f"⭐ {rating}")
+            st.write(badge)
+            st.caption(description)
