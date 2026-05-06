@@ -11,46 +11,89 @@ TMDB_API_KEY = "11da9eae256550559571dda4eb783d7c"
 st.markdown("""
 <style>
 
-/* FONT */
+/* GOOGLE FONT */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-/* GLOBAL */
+/* BACKGROUND */
 html, body, [class*="css"] {
     font-family: 'Poppins', sans-serif;
-    background-color: #0b0f1a;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #020617);
+    color: white;
 }
 
 /* HEADINGS */
-h1 { font-size: 42px; color: white; }
-h3 { font-size: 20px; color: #d1d5db; }
+h1 {
+    font-size: 42px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #6366f1, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-/* CARD */
+h3 {
+    color: #cbd5f5;
+}
+
+/* SEARCH + INPUT */
+.stTextInput input {
+    background-color: #1e293b;
+    color: white;
+    border: 1px solid #334155;
+    border-radius: 10px;
+}
+
+/* SELECT BOX */
+.stSelectbox div {
+    background-color: #1e293b;
+    color: white;
+}
+
+/* CARD DESIGN (GLASS EFFECT) */
 .card {
-    background: #111827;
-    border-radius: 12px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
     padding: 12px;
     margin-bottom: 20px;
     transition: 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.05);
 }
+
+/* HOVER EFFECT */
 .card:hover {
     transform: scale(1.05);
+    box-shadow: 0px 10px 25px rgba(99,102,241,0.3);
 }
 
 /* CARD TITLE */
 .card-title {
     font-size: 16px;
     font-weight: 600;
-    color: #f9fafb;
+    color: #f8fafc;
 }
 
 /* SENTIMENT COLORS */
 .positive { color: #22c55e; }
 .negative { color: #ef4444; }
-.neutral { color: #9ca3af; }
+.neutral { color: #94a3b8; }
+
+/* SECTION HEADINGS */
+h2 {
+    color: #e2e8f0;
+    margin-top: 20px;
+}
+
+/* SCROLLBAR (nice touch) */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #6366f1;
+    border-radius: 10px;
+}
 
 </style>
 """, unsafe_allow_html=True)
-
 # ---------------- TITLE ---------------- #
 st.markdown("""
 <h1>🎬 BingeWatch -- MoodWatch</h1>
