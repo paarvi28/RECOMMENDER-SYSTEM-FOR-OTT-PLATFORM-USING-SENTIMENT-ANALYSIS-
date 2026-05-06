@@ -5,23 +5,45 @@ import requests
 # ---------------- CONFIG ---------------- #
 st.set_page_config(layout="wide")
 
-TMDB_API_KEY = "11da9eae256550559571dda4eb783d7c" 
+TMDB_API_KEY = "11da9eae256550559571dda4eb783d7c"
 
 # ---------------- STYLE ---------------- #
 st.markdown("""
 <style>
 
-/* FONT */
+/* IMPORT FONT */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-html, body, [class*="css"]  {
+/* GLOBAL */
+html, body, [class*="css"] {
     font-family: 'Poppins', sans-serif;
     background-color: #0b0f1a;
 }
 
 /* HEADINGS */
-h1 { font-size: 42px; color: white; }
-h3 { font-size: 20px; color: #d1d5db; }
+h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+h3 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #d1d5db;
+}
+
+/* TEXT */
+p, span {
+    font-size: 14px;
+    color: #9ca3af;
+}
 
 /* CARD */
 .card {
@@ -33,16 +55,16 @@ h3 { font-size: 20px; color: #d1d5db; }
 }
 .card:hover {
     transform: scale(1.05);
-    box-shadow: 0px 8px 20px rgba(0,0,0,0.6);
 }
 
-/* TEXT */
+/* CARD TITLE */
 .card-title {
     font-size: 16px;
     font-weight: 600;
     color: #f9fafb;
 }
 
+/* SENTIMENT COLORS */
 .positive { color: #22c55e; }
 .negative { color: #ef4444; }
 .neutral { color: #9ca3af; }
@@ -52,17 +74,12 @@ h3 { font-size: 20px; color: #d1d5db; }
 
 # ---------------- TITLE ---------------- #
 st.markdown("""
-<h1>🎬 BingeWatch</h1>
+<h1>🎬 BingeWatch -- MoodWatch</h1>
 <h3>Your AI-powered OTT Recommendation Engine</h3>
 """, unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ---------------- #
-try:
-    df = pd.read_csv("final_movies.csv", encoding="latin1")
-except Exception as e:
-    st.error(f"Error loading dataset: {e}")
-    st.stop()
-
+df = pd.read_csv("final_movies.csv", encoding="latin1")
 df.columns = df.columns.str.lower()
 
 title_col = next((c for c in df.columns if 'title' in c), df.columns[0])
@@ -74,19 +91,20 @@ def get_sentiment(text):
     text = str(text).lower()
     pos = ['good','great','amazing','love']
     neg = ['bad','boring','worst','hate']
+
     score = sum(w in text for w in pos) - sum(w in text for w in neg)
 
     if score > 0:
-        return "Positive"
+        return "🟢 Positive"
     elif score < 0:
-        return "Negative"
+        return "🔴 Negative"
     else:
-        return "Neutral"
+        return "⚪ Neutral"
 
 if desc_col:
     df["sentiment"] = df[desc_col].apply(get_sentiment)
 else:
-    df["sentiment"] = "Neutral"
+    df["sentiment"] = "⚪ Neutral"
 
 # ---------------- TMDB FUNCTION ---------------- #
 @st.cache_data(show_spinner=False)
@@ -114,6 +132,7 @@ def get_movie_data(title):
                         break
 
             return poster_url, trailer_url
+
     except:
         return None, None
 
@@ -122,7 +141,7 @@ def get_movie_data(title):
 # ---------------- SEARCH + FILTER ---------------- #
 st.markdown("## 🔍 Discover")
 
-col1, col2 = st.columns([2,1])
+col1, col2 = st.columns([2, 1])
 
 with col1:
     search = st.text_input("Search movies")
@@ -168,10 +187,9 @@ for i, (_, row) in enumerate(filtered_df.iterrows()):
 
         poster, trailer = get_movie_data(title)
 
-        # sentiment color
-        if sentiment == "Positive":
+        if "Positive" in sentiment:
             sentiment_class = "positive"
-        elif sentiment == "Negative":
+        elif "Negative" in sentiment:
             sentiment_class = "negative"
         else:
             sentiment_class = "neutral"
