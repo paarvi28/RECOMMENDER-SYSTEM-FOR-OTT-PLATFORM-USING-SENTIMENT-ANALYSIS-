@@ -96,13 +96,13 @@ for i, row in filtered_df.iterrows():
             sentiment_class = "neutral"
 
         st.markdown(f"""
-        <div class="card">
-            <div class="card-title">{title}</div>
-            <p>⭐ {rating}</p>
-            <p class="{sentiment_class}">{sentiment}</p>
-            <p>{description}...</p>
-        </div>
-        """, unsafe_allow_html=True)
+<div class="card">
+    <div class="card-title">{title}</div>
+    <p>&#11088; {rating}</p>
+    <p class="{sentiment_class}">{sentiment}</p>
+    <p>{description}...</p>
+</div>
+""", unsafe_allow_html=True)
 /* TITLE INSIDE CARD */
 .card-title {
     font-size: 16px;
