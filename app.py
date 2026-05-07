@@ -174,14 +174,14 @@ st.markdown("""
 
 /* MAIN TITLE */
 .netflix-title {
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: Impact, Haettenschweiler,  'Poppins', sans-serif;
     font-size: 64px;
     color: #E50914;
     text-align: center;
     font-weight: 900;
     margin-top: 10px;
     margin-bottom: 0px;
-    animation: fadeSlide 2s ease;
+    animation: fadeSlide 2.5s ease;
     text-shadow:
         0 0 10px rgba(229,9,20,0.7),
         0 0 20px rgba(229,9,20,0.5);
