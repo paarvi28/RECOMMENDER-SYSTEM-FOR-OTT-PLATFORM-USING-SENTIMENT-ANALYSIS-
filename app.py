@@ -155,11 +155,57 @@ footer {
 # HERO SECTION
 # ---------------------------------------------------
 st.markdown("""
-<div class="hero">
-    <div class="hero-title">🎬 BingeWatch -- MoodWatch</div>
-    <div class="hero-subtitle">
-        AI-Powered OTT Recommendation Engine using Sentiment Analysis
-    </div>
+<style>
+
+/* NETFLIX TITLE ANIMATION */
+@keyframes fadeSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.9);
+        letter-spacing: 8px;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0px) scale(1);
+        letter-spacing: 1px;
+    }
+}
+
+/* MAIN TITLE */
+.netflix-title {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-size: 64px;
+    color: #E50914;
+    text-align: center;
+    font-weight: 900;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    animation: fadeSlide 2s ease;
+    text-shadow:
+        0 0 10px rgba(229,9,20,0.7),
+        0 0 20px rgba(229,9,20,0.5);
+}
+
+/* SUBTITLE */
+.netflix-subtitle {
+    text-align: center;
+    color: #d1d5db;
+    font-size: 22px;
+    margin-top: -10px;
+    margin-bottom: 35px;
+    font-family: 'Poppins', sans-serif;
+    animation: fadeSlide 2.5s ease;
+}
+
+</style>
+
+<div class="netflix-title">
+🎬 BingeWatch -- MoodWatch
+</div>
+
+<div class="netflix-subtitle">
+Your AI-powered OTT Recommendation Engine
 </div>
 """, unsafe_allow_html=True)
 
