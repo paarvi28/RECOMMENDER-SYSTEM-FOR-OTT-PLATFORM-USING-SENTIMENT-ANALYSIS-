@@ -148,6 +148,40 @@ footer {
     margin-bottom: 15px;
 }
 
+ /* SIDEBAR BACKGROUND */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(
+        180deg,
+        #141E30 0%,
+        #243B55 100%
+    );
+    border-right: 2px solid #E50914;
+}
+
+/* SIDEBAR TEXT */
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* NAVIGATION TITLE */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #E50914 !important;
+    font-weight: bold;
+}
+
+/* RADIO BUTTON LABELS */
+.stRadio label {
+    color: white !important;
+    font-size: 16px !important;
+}
+
+/* SIDEBAR HOVER EFFECT */
+section[data-testid="stSidebar"] .stRadio label:hover {
+    color: #E50914 !important;
+    transition: 0.3s;
+}
 </style>
 """, unsafe_allow_html=True)
 
