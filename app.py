@@ -208,7 +208,7 @@ st.markdown("""
 
 /* MAIN TITLE */
 .netflix-title {
-    font-family: Impact, Haettenschweiler,  'Poppins', sans-serif;
+    font-family: Poppins,  'Poppins', sans-serif;
     font-size: 64px;
     color: #E50914;
     text-align: center;
@@ -217,8 +217,8 @@ st.markdown("""
     margin-bottom: 0px;
     animation: fadeSlide 2.5s ease;
     text-shadow:
-        0 0 10px rgba(229,9,20,0.7),
-        0 0 20px rgba(229,9,20,0.5);
+        0 0 10px rgba(229,9,20),
+        0 0 20px rgba(229,9,20);
 }
 
 /* SUBTITLE */
