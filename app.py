@@ -190,12 +190,17 @@ Your AI-powered OTT Recommendation Engine
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------
+# ---------------------------------------------------
 # SESSION STATE
 # ---------------------------------------------------
 if "watchlist" not in st.session_state:
     st.session_state.watchlist = []
 
-# ---------------------------------------------------
+if "positive_feedback" not in st.session_state:
+    st.session_state.positive_feedback = 0
+
+if "negative_feedback" not in st.session_state:
+    st.session_state.negative_feedback = 0
 # LOAD DATA
 # ---------------------------------------------------
 try:
@@ -388,15 +393,17 @@ if page == "🏠 Home":
     # METRICS
     # ---------------------------------------------------
     positive_count = (
-        df["sentiment"].str.contains("Positive").sum()
+    df["sentiment"].str.contains("Positive").sum()
+    + st.session_state.positive_feedback
     )
 
     negative_count = (
-        df["sentiment"].str.contains("Negative").sum()
+    df["sentiment"].str.contains("Negative").sum()
+    + st.session_state.negative_feedback
     )
 
     neutral_count = (
-        df["sentiment"].str.contains("Neutral").sum()
+    df["sentiment"].str.contains("Neutral").sum()
     )
 
     a1, a2, a3 = st.columns(3)
@@ -532,26 +539,36 @@ if page == "🏠 Home":
                         st.video(trailer)
 
             # FEEDBACK BUTTONS
-            f1, f2 = st.columns(2)
+# FEEDBACK BUTTONS
+f1, f2 = st.columns(2)
 
-            with f1:
+with f1:
 
-                if st.button(
-                    "👍",
-                    key=f"feedback_like_{i}"
-                ):
+    if st.button(
+        "👍",
+        key=f"feedback_like_{i}"
+    ):
 
-                    st.success("Thanks for your feedback!")
+        st.session_state.positive_feedback += 1
 
-            with f2:
+        st.success("Thanks for your feedback!")
 
-                if st.button(
-                    "👎",
-                    key=f"feedback_dislike_{i}"
-                ):
+        st.rerun()
 
-                    st.warning("Feedback noted!")
+with f2:
 
+    if st.button(
+        "👎",
+        key=f"feedback_dislike_{i}"
+    ):
+
+        st.session_state.negative_feedback += 1
+
+        st.warning("Feedback noted!")
+
+        st.rerun()
+
+        
             # CARD END
             st.markdown(
                 '</div>',
