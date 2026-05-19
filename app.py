@@ -190,7 +190,6 @@ Your AI-powered OTT Recommendation Engine
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------
-# ---------------------------------------------------
 # SESSION STATE
 # ---------------------------------------------------
 if "watchlist" not in st.session_state:
@@ -201,17 +200,23 @@ if "positive_feedback" not in st.session_state:
 
 if "negative_feedback" not in st.session_state:
     st.session_state.negative_feedback = 0
+
+# ---------------------------------------------------
 # LOAD DATA
 # ---------------------------------------------------
 try:
     df = pd.read_csv("final_movies.csv", encoding="latin1")
+
 except Exception:
     st.error("Dataset not found. Please check final_movies.csv")
     st.stop()
 
 df.columns = df.columns.str.lower()
 
-title_col = next((c for c in df.columns if 'title' in c), df.columns[0])
+title_col = next(
+    (c for c in df.columns if 'title' in c),
+    df.columns[0]
+)
 
 genre_col = next(
     (c for c in df.columns if 'listed' in c or 'genre' in c),
@@ -265,12 +270,15 @@ def get_sentiment(text):
 
     return sentiment, final_score
 
-# SAFE DESCRIPTION CHECK
+# APPLY SENTIMENT
 if desc_col:
+
     df[["sentiment", "sentiment_score"]] = df[desc_col].apply(
         lambda x: pd.Series(get_sentiment(x))
     )
+
 else:
+
     df["sentiment"] = "⚪ Neutral"
     df["sentiment_score"] = 0
 
@@ -350,7 +358,10 @@ if page == "🏠 Home":
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        search = st.text_input("Search Movies or Shows")
+
+        search = st.text_input(
+            "Search Movies or Shows"
+        )
 
     with col2:
 
@@ -368,7 +379,9 @@ if page == "🏠 Home":
         else:
             selected_genre = "All"
 
+    # ---------------------------------------------------
     # FILTERING
+    # ---------------------------------------------------
     filtered_df = df.copy()
 
     if selected_genre != "All" and genre_col:
@@ -393,17 +406,17 @@ if page == "🏠 Home":
     # METRICS
     # ---------------------------------------------------
     positive_count = (
-    df["sentiment"].str.contains("Positive").sum()
-    + st.session_state.positive_feedback
+        df["sentiment"].str.contains("Positive").sum()
+        + st.session_state.positive_feedback
     )
 
     negative_count = (
-    df["sentiment"].str.contains("Negative").sum()
-    + st.session_state.negative_feedback
+        df["sentiment"].str.contains("Negative").sum()
+        + st.session_state.negative_feedback
     )
 
     neutral_count = (
-    df["sentiment"].str.contains("Neutral").sum()
+        df["sentiment"].str.contains("Neutral").sum()
     )
 
     a1, a2, a3 = st.columns(3)
@@ -418,7 +431,7 @@ if page == "🏠 Home":
         st.metric("⚪ Neutral Content", neutral_count)
 
     # ---------------------------------------------------
-    # TRENDING
+    # TRENDING SECTION
     # ---------------------------------------------------
     st.markdown(
         '<div class="section-title">🔥 Trending Now</div>',
@@ -454,8 +467,16 @@ if page == "🏠 Home":
         with cols[i % 4]:
 
             title = row.get(title_col, "No Title")
-            sentiment = row.get("sentiment", "⚪ Neutral")
-            score = row.get("sentiment_score", 0)
+
+            sentiment = row.get(
+                "sentiment",
+                "⚪ Neutral"
+            )
+
+            score = row.get(
+                "sentiment_score",
+                0
+            )
 
             description = (
                 str(row.get(desc_col, "No description"))[:100]
@@ -464,7 +485,9 @@ if page == "🏠 Home":
 
             poster, trailer = get_movie_data(title)
 
+            # ---------------------------------------------------
             # SENTIMENT CLASS
+            # ---------------------------------------------------
             if "Positive" in sentiment:
                 sentiment_class = "positive"
 
@@ -474,7 +497,9 @@ if page == "🏠 Home":
             else:
                 sentiment_class = "neutral"
 
+            # ---------------------------------------------------
             # CARD START
+            # ---------------------------------------------------
             st.markdown(
                 '<div class="movie-card">',
                 unsafe_allow_html=True
@@ -493,13 +518,13 @@ if page == "🏠 Home":
                 unsafe_allow_html=True
             )
 
-            # SENTIMENT
+            # SENTIMENT TEXT
             st.markdown(
                 f'<div class="{sentiment_class}">{sentiment}</div>',
                 unsafe_allow_html=True
             )
 
-            # SENTIMENT BAR
+            # PROGRESS BAR
             st.progress((score + 100) / 200)
 
             # SCORE
@@ -511,7 +536,9 @@ if page == "🏠 Home":
                 unsafe_allow_html=True
             )
 
-            # BUTTONS
+            # ---------------------------------------------------
+            # LIKE + TRAILER BUTTONS
+            # ---------------------------------------------------
             b1, b2 = st.columns(2)
 
             with b1:
@@ -525,9 +552,15 @@ if page == "🏠 Home":
 
                         st.session_state.watchlist.append(title)
 
+                        # UPDATE POSITIVE METRIC
+                        st.session_state.positive_feedback += 1
+
                         st.success("Added to Watchlist")
 
+                        st.rerun()
+
                     else:
+
                         st.info("Already in Watchlist")
 
             with b2:
@@ -538,38 +571,40 @@ if page == "🏠 Home":
 
                         st.video(trailer)
 
+            # ---------------------------------------------------
             # FEEDBACK BUTTONS
-# FEEDBACK BUTTONS
-f1, f2 = st.columns(2)
+            # ---------------------------------------------------
+            f1, f2 = st.columns(2)
 
-with f1:
+            with f1:
 
-    if st.button(
-        "👍",
-        key=f"feedback_like_{i}"
-    ):
+                if st.button(
+                    "👍 Helpful",
+                    key=f"feedback_like_{i}"
+                ):
 
-        st.session_state.positive_feedback += 1
+                    st.session_state.positive_feedback += 1
 
-        st.success("Thanks for your feedback!")
+                    st.success("Thanks for your feedback!")
 
-        st.rerun()
+                    st.rerun()
 
-with f2:
+            with f2:
 
-    if st.button(
-        "👎",
-        key=f"feedback_dislike_{i}"
-    ):
+                if st.button(
+                    "👎 Not Interested",
+                    key=f"feedback_dislike_{i}"
+                ):
 
-        st.session_state.negative_feedback += 1
+                    st.session_state.negative_feedback += 1
 
-        st.warning("Feedback noted!")
+                    st.warning("Feedback noted!")
 
-        st.rerun()
+                    st.rerun()
 
-        
+            # ---------------------------------------------------
             # CARD END
+            # ---------------------------------------------------
             st.markdown(
                 '</div>',
                 unsafe_allow_html=True
