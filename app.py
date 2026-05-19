@@ -308,6 +308,10 @@ def get_sentiment(text):
 
     return sentiment, final_score
 
+df[["sentiment", "sentiment_score"]] = df[desc_col].apply(
+    lambda x: pd.Series(get_sentiment(x))
+)
+
 # ---------------------------------------------------
 # TMDB FUNCTION
 # ---------------------------------------------------
@@ -427,6 +431,22 @@ if page == "🏠 Home":
     # ---------------------------------------------------
     # TRENDING ROW
     # ---------------------------------------------------
+
+positive_count = (df["sentiment"].str.contains("Positive")).sum()
+negative_count = (df["sentiment"].str.contains("Negative")).sum()
+neutral_count = (df["sentiment"].str.contains("Neutral")).sum()
+
+a1, a2, a3 = st.columns(3)
+
+with a1:
+    st.metric("🟢 Positive Content", positive_count)
+
+with a2:
+    st.metric("🔴 Negative Content", negative_count)
+
+with a3:
+    st.metric("⚪ Neutral Content", neutral_count)
+    
     st.markdown(
         '<div class="section-title">🔥 Trending Now</div>',
         unsafe_allow_html=True
@@ -495,11 +515,26 @@ if page == "🏠 Home":
                 f'<div class="movie-title">{title}</div>',
                 unsafe_allow_html=True
             )
+            
+            st.markdown(f'<div class="sentiment">{sentiment}</div>', unsafe_allow_html=True)
+            
+        score = row["sentiment_score"]
 
-            st.markdown(
-                f'<div class="{sentiment_class}">{sentiment}</div>',
-                unsafe_allow_html=True
-            )
+        st.progress((score + 100) / 200)
+
+        st.caption(f"Sentiment Score: {score}")
+
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("👍 Like", key=f"like_{i}"):
+            st.success("Added to your liked content!")
+
+        with col2:
+            if st.button("👎 Dislike", key=f"dislike_{i}"):
+                st.warning("Feedback noted!")
+                )
 
             st.markdown(
                 f'<div class="movie-desc">{description}...</div>',
