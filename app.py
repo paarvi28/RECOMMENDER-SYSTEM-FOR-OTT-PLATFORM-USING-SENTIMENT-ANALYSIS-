@@ -31,15 +31,7 @@ html, body, .stApp {
 }
 
 /* REMOVE STREAMLIT DEFAULTS */
-header {
-    visibility: hidden;
-}
-
-footer {
-    visibility: hidden;
-}
-
-#MainMenu {
+header, footer, #MainMenu {
     visibility: hidden;
 }
 
@@ -50,31 +42,25 @@ footer {
     padding-right: 2rem;
 }
 
-/* HERO SECTION */
-.hero {
-    background: linear-gradient(90deg, rgba(15,23,42,0.95), rgba(30,41,59,0.7)),
-                url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    border-radius: 20px;
-    padding: 60px;
-    margin-bottom: 30px;
-    box-shadow: 0px 8px 30px rgba(0,0,0,0.5);
+/* SIDEBAR */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(
+        180deg,
+        #141E30 0%,
+        #243B55 100%
+    );
+    border-right: 2px solid #E50914;
 }
 
-/* TITLES */
-.hero-title {
-    font-size: 52px;
-    font-weight: 700;
-    background: linear-gradient(90deg, #818cf8, #ec4899);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+section[data-testid="stSidebar"] * {
+    color: white !important;
 }
 
-.hero-subtitle {
-    color: #d1d5db;
-    font-size: 18px;
-    margin-top: 10px;
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #E50914 !important;
+    font-weight: bold;
 }
 
 /* SEARCH INPUT */
@@ -93,7 +79,7 @@ footer {
     color: white !important;
 }
 
-/* CARD */
+/* MOVIE CARD */
 .movie-card {
     background: rgba(30, 41, 59, 0.6);
     backdrop-filter: blur(10px);
@@ -111,19 +97,19 @@ footer {
 
 /* MOVIE TITLE */
 .movie-title {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 600;
     color: #f8fafc;
     margin-top: 10px;
 }
 
-/* MOVIE DESCRIPTION */
+/* DESCRIPTION */
 .movie-desc {
     font-size: 13px;
     color: #cbd5e1;
 }
 
-/* SENTIMENT */
+/* SENTIMENT COLORS */
 .positive {
     color: #22c55e;
     font-weight: 600;
@@ -148,50 +134,7 @@ footer {
     margin-bottom: 15px;
 }
 
- /* SIDEBAR BACKGROUND */
-section[data-testid="stSidebar"] {
-    background: linear-gradient(
-        180deg,
-        #141E30 0%,
-        #243B55 100%
-    );
-    border-right: 2px solid #E50914;
-}
-
-/* SIDEBAR TEXT */
-section[data-testid="stSidebar"] * {
-    color: white !important;
-}
-
-/* NAVIGATION TITLE */
-section[data-testid="stSidebar"] h1,
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3 {
-    color: #E50914 !important;
-    font-weight: bold;
-}
-
-/* RADIO BUTTON LABELS */
-.stRadio label {
-    color: white !important;
-    font-size: 16px !important;
-}
-
-/* SIDEBAR HOVER EFFECT */
-section[data-testid="stSidebar"] .stRadio label:hover {
-    color: #E50914 !important;
-    transition: 0.3s;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ---------------------------------------------------
-# HERO SECTION
-# ---------------------------------------------------
-st.markdown("""
-<style>
-
-/* NETFLIX TITLE ANIMATION */
+/* TITLE ANIMATION */
 @keyframes fadeSlide {
     0% {
         opacity: 0;
@@ -208,7 +151,6 @@ st.markdown("""
 
 /* MAIN TITLE */
 .netflix-title {
-    font-family: Poppins,  'Poppins', sans-serif;
     font-size: 64px;
     color: #E50914;
     text-align: center;
@@ -217,8 +159,8 @@ st.markdown("""
     margin-bottom: 0px;
     animation: fadeSlide 2.5s ease;
     text-shadow:
-        0 0 10px rgba(229,9,20),
-        0 0 20px rgba(229,9,20);
+        0 0 10px rgba(229,9,20,0.8),
+        0 0 20px rgba(229,9,20,0.5);
 }
 
 /* SUBTITLE */
@@ -228,12 +170,16 @@ st.markdown("""
     font-size: 22px;
     margin-top: -10px;
     margin-bottom: 35px;
-    font-family: 'Poppins', sans-serif;
     animation: fadeSlide 2.5s ease;
 }
 
 </style>
+""", unsafe_allow_html=True)
 
+# ---------------------------------------------------
+# HERO TITLE
+# ---------------------------------------------------
+st.markdown("""
 <div class="netflix-title">
 🎬 BingeWatch -- MoodWatch
 </div>
@@ -249,23 +195,28 @@ Your AI-powered OTT Recommendation Engine
 if "watchlist" not in st.session_state:
     st.session_state.watchlist = []
 
-if "liked_movies" not in st.session_state:
-    st.session_state.liked_movies = []
-
 # ---------------------------------------------------
 # LOAD DATA
 # ---------------------------------------------------
 try:
     df = pd.read_csv("final_movies.csv", encoding="latin1")
-except:
+except Exception:
     st.error("Dataset not found. Please check final_movies.csv")
     st.stop()
 
 df.columns = df.columns.str.lower()
 
 title_col = next((c for c in df.columns if 'title' in c), df.columns[0])
-genre_col = next((c for c in df.columns if 'listed' in c or 'genre' in c), None)
-desc_col = next((c for c in df.columns if 'description' in c or 'overview' in c), None)
+
+genre_col = next(
+    (c for c in df.columns if 'listed' in c or 'genre' in c),
+    None
+)
+
+desc_col = next(
+    (c for c in df.columns if 'description' in c or 'overview' in c),
+    None
+)
 
 # ---------------------------------------------------
 # SENTIMENT ANALYSIS
@@ -296,21 +247,27 @@ def get_sentiment(text):
         if word in text:
             score -= 1
 
-    # normalize score
     final_score = max(min(score * 20, 100), -100)
 
     if final_score > 20:
         sentiment = "🟢 Positive"
+
     elif final_score < -20:
         sentiment = "🔴 Negative"
+
     else:
         sentiment = "⚪ Neutral"
 
     return sentiment, final_score
 
-df[["sentiment", "sentiment_score"]] = df[desc_col].apply(
-    lambda x: pd.Series(get_sentiment(x))
-)
+# SAFE DESCRIPTION CHECK
+if desc_col:
+    df[["sentiment", "sentiment_score"]] = df[desc_col].apply(
+        lambda x: pd.Series(get_sentiment(x))
+    )
+else:
+    df["sentiment"] = "⚪ Neutral"
+    df["sentiment_score"] = 0
 
 # ---------------------------------------------------
 # TMDB FUNCTION
@@ -360,7 +317,7 @@ def get_movie_data(title):
 
             return poster_url, trailer_url
 
-    except:
+    except Exception:
         return None, None
 
     return None, None
@@ -388,9 +345,7 @@ if page == "🏠 Home":
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        search = st.text_input(
-            "Search Movies or Shows"
-        )
+        search = st.text_input("Search Movies or Shows")
 
     with col2:
 
@@ -408,6 +363,7 @@ if page == "🏠 Home":
         else:
             selected_genre = "All"
 
+    # FILTERING
     filtered_df = df.copy()
 
     if selected_genre != "All" and genre_col:
@@ -429,24 +385,34 @@ if page == "🏠 Home":
     filtered_df = filtered_df.head(16)
 
     # ---------------------------------------------------
-    # TRENDING ROW
+    # METRICS
     # ---------------------------------------------------
+    positive_count = (
+        df["sentiment"].str.contains("Positive").sum()
+    )
 
-positive_count = (df["sentiment"].str.contains("Positive")).sum()
-negative_count = (df["sentiment"].str.contains("Negative")).sum()
-neutral_count = (df["sentiment"].str.contains("Neutral")).sum()
+    negative_count = (
+        df["sentiment"].str.contains("Negative").sum()
+    )
 
-a1, a2, a3 = st.columns(3)
+    neutral_count = (
+        df["sentiment"].str.contains("Neutral").sum()
+    )
 
-with a1:
-    st.metric("🟢 Positive Content", positive_count)
+    a1, a2, a3 = st.columns(3)
 
-with a2:
-    st.metric("🔴 Negative Content", negative_count)
+    with a1:
+        st.metric("🟢 Positive Content", positive_count)
 
-with a3:
-    st.metric("⚪ Neutral Content", neutral_count)
-    
+    with a2:
+        st.metric("🔴 Negative Content", negative_count)
+
+    with a3:
+        st.metric("⚪ Neutral Content", neutral_count)
+
+    # ---------------------------------------------------
+    # TRENDING
+    # ---------------------------------------------------
     st.markdown(
         '<div class="section-title">🔥 Trending Now</div>',
         unsafe_allow_html=True
@@ -466,138 +432,135 @@ with a3:
                 use_container_width=True
             )
 
-   # ---------------------------------------------------
-# MAIN GRID
-# ---------------------------------------------------
+    # ---------------------------------------------------
+    # MAIN GRID
+    # ---------------------------------------------------
+    st.markdown(
+        '<div class="section-title">🎬 Recommended For You</div>',
+        unsafe_allow_html=True
+    )
 
-st.markdown(
-    '<div class="section-title">🎬 Recommended For You</div>',
-    unsafe_allow_html=True
-)
+    cols = st.columns(4)
 
-cols = st.columns(4)
+    for i, (_, row) in enumerate(filtered_df.iterrows()):
 
-for i, (_, row) in enumerate(filtered_df.iterrows()):
+        with cols[i % 4]:
 
-    with cols[i % 4]:
+            title = row.get(title_col, "No Title")
+            sentiment = row.get("sentiment", "⚪ Neutral")
+            score = row.get("sentiment_score", 0)
 
-        title = row.get(title_col, "No Title")
-        sentiment = row.get("sentiment", "⚪ Neutral")
-        score = row.get("sentiment_score", 0)
+            description = (
+                str(row.get(desc_col, "No description"))[:100]
+                if desc_col else "No description"
+            )
 
-        description = (
-            str(row.get(desc_col, "No description"))[:100]
-            if desc_col else "No description"
-        )
+            poster, trailer = get_movie_data(title)
 
-        poster, trailer = get_movie_data(title)
+            # SENTIMENT CLASS
+            if "Positive" in sentiment:
+                sentiment_class = "positive"
 
-        # sentiment color
-        if "Positive" in sentiment:
-            sentiment_class = "positive"
+            elif "Negative" in sentiment:
+                sentiment_class = "negative"
 
-        elif "Negative" in sentiment:
-            sentiment_class = "negative"
+            else:
+                sentiment_class = "neutral"
 
-        else:
-            sentiment_class = "neutral"
+            # CARD START
+            st.markdown(
+                '<div class="movie-card">',
+                unsafe_allow_html=True
+            )
 
-        # CARD START
-        st.markdown(
-            '<div class="movie-card">',
-            unsafe_allow_html=True
-        )
+            # IMAGE
+            st.image(
+                poster if poster else
+                "https://via.placeholder.com/300x400",
+                use_container_width=True
+            )
 
-        # POSTER
-        st.image(
-            poster if poster else
-            "https://via.placeholder.com/300x400",
-            use_container_width=True
-        )
+            # TITLE
+            st.markdown(
+                f'<div class="movie-title">{title}</div>',
+                unsafe_allow_html=True
+            )
 
-        # TITLE
-        st.markdown(
-            f'<div class="movie-title">{title}</div>',
-            unsafe_allow_html=True
-        )
+            # SENTIMENT
+            st.markdown(
+                f'<div class="{sentiment_class}">{sentiment}</div>',
+                unsafe_allow_html=True
+            )
 
-        # SENTIMENT TEXT
-        st.markdown(
-            f'<div class="{sentiment_class}">{sentiment}</div>',
-            unsafe_allow_html=True
-        )
+            # SENTIMENT BAR
+            st.progress((score + 100) / 200)
 
-        # SENTIMENT BAR
-        st.progress((score + 100) / 200)
+            # SCORE
+            st.caption(f"Sentiment Score: {score}")
 
-        # SENTIMENT SCORE
-        st.caption(f"Sentiment Score: {score}")
+            # DESCRIPTION
+            st.markdown(
+                f'<div class="movie-desc">{description}...</div>',
+                unsafe_allow_html=True
+            )
 
-        # DESCRIPTION
-        st.markdown(
-            f'<div class="movie-desc">{description}...</div>',
-            unsafe_allow_html=True
-        )
+            # BUTTONS
+            b1, b2 = st.columns(2)
 
-        # BUTTONS
-        b1, b2 = st.columns(2)
+            with b1:
 
-        # LIKE BUTTON
-        with b1:
+                if st.button(
+                    "❤️ Like",
+                    key=f"like_{i}"
+                ):
 
-            if st.button(
-                "❤️ Like",
-                key=f"like_{i}"
-            ):
+                    if title not in st.session_state.watchlist:
 
-                if title not in st.session_state.watchlist:
+                        st.session_state.watchlist.append(title)
 
-                    st.session_state.watchlist.append(title)
+                        st.success("Added to Watchlist")
 
-                    st.success("Added to Watchlist")
+                    else:
+                        st.info("Already in Watchlist")
 
-                else:
-                    st.info("Already in Watchlist")
+            with b2:
 
-        # TRAILER BUTTON
-        with b2:
+                if trailer:
 
-            if trailer:
+                    with st.popover("▶ Trailer"):
 
-                with st.popover("▶ Trailer"):
+                        st.video(trailer)
 
-                    st.video(trailer)
+            # FEEDBACK BUTTONS
+            f1, f2 = st.columns(2)
 
-        # FEEDBACK BUTTONS
-        f1, f2 = st.columns(2)
+            with f1:
 
-        with f1:
+                if st.button(
+                    "👍",
+                    key=f"feedback_like_{i}"
+                ):
 
-            if st.button(
-                "👍",
-                key=f"feedback_like_{i}"
-            ):
+                    st.success("Thanks for your feedback!")
 
-                st.success("Thanks for your feedback!")
+            with f2:
 
-        with f2:
+                if st.button(
+                    "👎",
+                    key=f"feedback_dislike_{i}"
+                ):
 
-            if st.button(
-                "👎",
-                key=f"feedback_dislike_{i}"
-            ):
+                    st.warning("Feedback noted!")
 
-                st.warning("Feedback noted!")
+            # CARD END
+            st.markdown(
+                '</div>',
+                unsafe_allow_html=True
+            )
 
-        # CARD END
-        st.markdown(
-            '</div>',
-            unsafe_allow_html=True
-        )
 # ---------------------------------------------------
 # WATCHLIST PAGE
 # ---------------------------------------------------
-
 elif page == "❤️ Watchlist":
 
     st.markdown(
