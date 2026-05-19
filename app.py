@@ -276,12 +276,14 @@ def get_sentiment(text):
 
     positive_words = [
         'good', 'great', 'amazing', 'love',
-        'excellent', 'fun', 'best', 'awesome'
+        'excellent', 'fun', 'best',
+        'awesome', 'fantastic', 'masterpiece'
     ]
 
     negative_words = [
         'bad', 'boring', 'worst',
-        'hate', 'poor', 'slow'
+        'hate', 'poor', 'slow',
+        'awful', 'terrible'
     ]
 
     score = 0
@@ -294,18 +296,17 @@ def get_sentiment(text):
         if word in text:
             score -= 1
 
-    if score > 0:
-        return "🟢 Positive"
+    # normalize score
+    final_score = max(min(score * 20, 100), -100)
 
-    elif score < 0:
-        return "🔴 Negative"
+    if final_score > 20:
+        sentiment = "🟢 Positive"
+    elif final_score < -20:
+        sentiment = "🔴 Negative"
+    else:
+        sentiment = "⚪ Neutral"
 
-    return "⚪ Neutral"
-
-if desc_col:
-    df["sentiment"] = df[desc_col].astype(str).apply(get_sentiment)
-else:
-    df["sentiment"] = "⚪ Neutral"
+    return sentiment, final_score
 
 # ---------------------------------------------------
 # TMDB FUNCTION
