@@ -597,6 +597,7 @@ for i, (_, row) in enumerate(filtered_df.iterrows()):
 # ---------------------------------------------------
 # WATCHLIST PAGE
 # ---------------------------------------------------
+
 elif page == "❤️ Watchlist":
 
     st.markdown(
