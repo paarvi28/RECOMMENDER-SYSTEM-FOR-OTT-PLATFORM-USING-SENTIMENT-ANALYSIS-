@@ -466,108 +466,134 @@ with a3:
                 use_container_width=True
             )
 
-    # ---------------------------------------------------
-    # MAIN GRID
-    # ---------------------------------------------------
-    st.markdown(
-        '<div class="section-title">🎬 Recommended For You</div>',
-        unsafe_allow_html=True
-    )
+   # ---------------------------------------------------
+# MAIN GRID
+# ---------------------------------------------------
 
-    cols = st.columns(4)
+st.markdown(
+    '<div class="section-title">🎬 Recommended For You</div>',
+    unsafe_allow_html=True
+)
 
-    for i, (_, row) in enumerate(filtered_df.iterrows()):
+cols = st.columns(4)
 
-        with cols[i % 4]:
+for i, (_, row) in enumerate(filtered_df.iterrows()):
 
-            title = row.get(title_col, "No Title")
-            sentiment = row.get("sentiment", "⚪ Neutral")
+    with cols[i % 4]:
 
-            description = (
-                str(row.get(desc_col, "No description"))[:100]
-                if desc_col else "No description"
-            )
+        title = row.get(title_col, "No Title")
+        sentiment = row.get("sentiment", "⚪ Neutral")
+        score = row.get("sentiment_score", 0)
 
-            poster, trailer = get_movie_data(title)
+        description = (
+            str(row.get(desc_col, "No description"))[:100]
+            if desc_col else "No description"
+        )
 
-            # sentiment color
-            if "Positive" in sentiment:
-                sentiment_class = "positive"
+        poster, trailer = get_movie_data(title)
 
-            elif "Negative" in sentiment:
-                sentiment_class = "negative"
+        # sentiment color
+        if "Positive" in sentiment:
+            sentiment_class = "positive"
 
-            else:
-                sentiment_class = "neutral"
+        elif "Negative" in sentiment:
+            sentiment_class = "negative"
 
-            st.markdown(
-                '<div class="movie-card">',
-                unsafe_allow_html=True
-            )
+        else:
+            sentiment_class = "neutral"
 
-            st.image(
-                poster if poster else
-                "https://via.placeholder.com/300x400",
-                use_container_width=True
-            )
+        # CARD START
+        st.markdown(
+            '<div class="movie-card">',
+            unsafe_allow_html=True
+        )
 
-            st.markdown(
-                f'<div class="movie-title">{title}</div>',
-                unsafe_allow_html=True
-            )
-            
-            st.markdown(f'<div class="sentiment">{sentiment}</div>', unsafe_allow_html=True)
-            
-        score = row["sentiment_score"]
+        # POSTER
+        st.image(
+            poster if poster else
+            "https://via.placeholder.com/300x400",
+            use_container_width=True
+        )
 
+        # TITLE
+        st.markdown(
+            f'<div class="movie-title">{title}</div>',
+            unsafe_allow_html=True
+        )
+
+        # SENTIMENT TEXT
+        st.markdown(
+            f'<div class="{sentiment_class}">{sentiment}</div>',
+            unsafe_allow_html=True
+        )
+
+        # SENTIMENT BAR
         st.progress((score + 100) / 200)
 
+        # SENTIMENT SCORE
         st.caption(f"Sentiment Score: {score}")
 
+        # DESCRIPTION
+        st.markdown(
+            f'<div class="movie-desc">{description}...</div>',
+            unsafe_allow_html=True
+        )
 
-        col1, col2 = st.columns(2)
+        # BUTTONS
+        b1, b2 = st.columns(2)
 
-        with col1:
-            if st.button("👍 Like", key=f"like_{i}"):
-            st.success("Added to your liked content!")
+        # LIKE BUTTON
+        with b1:
 
-        with col2:
-            if st.button("👎 Dislike", key=f"dislike_{i}"):
+            if st.button(
+                "❤️ Like",
+                key=f"like_{i}"
+            ):
+
+                if title not in st.session_state.watchlist:
+
+                    st.session_state.watchlist.append(title)
+
+                    st.success("Added to Watchlist")
+
+                else:
+                    st.info("Already in Watchlist")
+
+        # TRAILER BUTTON
+        with b2:
+
+            if trailer:
+
+                with st.popover("▶ Trailer"):
+
+                    st.video(trailer)
+
+        # FEEDBACK BUTTONS
+        f1, f2 = st.columns(2)
+
+        with f1:
+
+            if st.button(
+                "👍",
+                key=f"feedback_like_{i}"
+            ):
+
+                st.success("Thanks for your feedback!")
+
+        with f2:
+
+            if st.button(
+                "👎",
+                key=f"feedback_dislike_{i}"
+            ):
+
                 st.warning("Feedback noted!")
 
-            st.markdown(
-                f'<div class="movie-desc">{description}...</div>',
-                unsafe_allow_html=True
-            )
-
-            # buttons
-            b1, b2 = st.columns(2)
-
-            with b1:
-
-                if st.button(
-                    "❤️ Like",
-                    key=f"like_{i}"
-                ):
-
-                    if title not in st.session_state.watchlist:
-
-                        st.session_state.watchlist.append(title)
-
-                        st.success("Added to Watchlist")
-
-            with b2:
-
-                if trailer:
-
-                    with st.popover("▶ Trailer"):
-                        st.video(trailer)
-
-            st.markdown(
-                '</div>',
-                unsafe_allow_html=True
-            )
-
+        # CARD END
+        st.markdown(
+            '</div>',
+            unsafe_allow_html=True
+        )
 # ---------------------------------------------------
 # WATCHLIST PAGE
 # ---------------------------------------------------
