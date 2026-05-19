@@ -534,7 +534,6 @@ with a3:
         with col2:
             if st.button("👎 Dislike", key=f"dislike_{i}"):
                 st.warning("Feedback noted!")
-                )
 
             st.markdown(
                 f'<div class="movie-desc">{description}...</div>',
